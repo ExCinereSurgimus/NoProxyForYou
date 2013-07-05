@@ -1,13 +1,3 @@
-package net.ecsserver.plugins.bukkitdnsbl;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.logging.Logger;
-
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
 /*
  *  Copyright (c) 2013 Ex Cinere Surgimus, LLC
  *  This program is free software: you can redistribute it and/or modify
@@ -24,6 +14,16 @@ import org.bukkit.scheduler.BukkitRunnable;
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package net.ecsserver.plugins.bukkitdnsbl;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.logging.Logger;
+
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import org.xbill.DNS.ARecord;
 import org.xbill.DNS.Lookup;
 import org.xbill.DNS.Record;
@@ -37,8 +37,7 @@ public class DNSBLThread extends BukkitRunnable {
 	private String chatPrefix;
 	private String logPrefix;
 
-	public DNSBLThread(Player player, Plugin plugin)
-	{
+	public DNSBLThread(Player player, Plugin plugin) {
 		player = this.player;
 		log = BukkitDNSBL.log;
 		chatPrefix = BukkitDNSBL.chatPrefix;
@@ -143,6 +142,5 @@ public class DNSBLThread extends BukkitRunnable {
 			log.severe(logPrefix + " There was an error! Printing stacktrace!");
 			System.out.println(e.getStackTrace());
 		}		
-	}
-	
+	}	
 }

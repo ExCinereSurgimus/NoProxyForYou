@@ -24,7 +24,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-
 public class BukkitDNSBL extends JavaPlugin implements Listener {
 	public final static Logger log = Logger.getLogger("DNSBL");
 	public static String logPrefix = "[DNSBL]";
@@ -32,7 +31,7 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 	
 	@Override
     public void onEnable() {
-        log.info(logPrefix + " now checking player's against know DNSBLs.");
+        log.info(logPrefix + " now checking players against know DNSBLs.");
     }
  
     @Override

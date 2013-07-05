@@ -3,12 +3,12 @@
   <groupId>net.ecs-server.plugins</groupId>
   <artifactId>Bukkit-DNSBL</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-      <repositories>
-        <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>bukkit-repo</id>
+      <url>http://repo.bukkit.org/content/groups/public</url>
+    </repository>
+  </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -31,4 +31,13 @@
   		<version>1.5.2-R1.0</version>
   	</dependency>
   </dependencies>
+  <description>A bukkit plugin to do threaded checks of a player's IP for Open proxies and Tor Exit Nodes using publicly accessible DNS Blacklists.</description>
+  <organization>
+  	<name>Ex Cinere Surgimus, LLC</name>
+  	<url>http://www.ecs-server.net/</url>
+  </organization>
+  <scm>
+  	<url>git@github.com:ExCinereSurgimus/Bukkit-DNSBL.git</url>
+  	<connection>ssh</connection>
+  </scm>
 </project>
