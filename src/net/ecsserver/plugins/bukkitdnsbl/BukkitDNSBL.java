@@ -18,7 +18,6 @@ package net.ecsserver.plugins.bukkitdnsbl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -34,10 +33,10 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 	
 	final static Logger log = Logger.getLogger("DNSBL");
 	static String logPrefix = "[DNSBL]";
+	static String debugPrefix = "[DNSBL-DEBUG]";
 	static String chatPrefix = "&3[DNSBL]&f";
 	Server server = getServer();
-	static ArrayList<String> list = new ArrayList<String>(); // no, No, NO, NOOOO!
-	
+	public static ArrayList<String> list = new ArrayList<String>();
 	
 	@Override
     public void onEnable() {
@@ -45,10 +44,12 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 		try {
 		    Metrics metrics = new Metrics(this);
 		    metrics.start();
+		    debugLog(debugPrefix + " Sending data to Metrics.");
 		} catch (IOException e) {
+			debugLog(debugPrefix + " Metrics failed to send!");
 		    // Failed to submit the stats :-(
 		}
-        log.info(logPrefix + " now checking players against know DNSBLs.");
+        log.info(logPrefix + " Now checking players against known DNSBLs.");
     }
  
     @Override
@@ -64,10 +65,10 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
     
 	@EventHandler
 	void OnPlayerJoin(PlayerJoinEvent event) {
-		debugLog(logPrefix + " Got login for player " + event.getPlayer().getName());
+		debugLog(debugPrefix + " Got login for player " + event.getPlayer().getName());
 		Player player = event.getPlayer();
 		if (!player.hasPermission("dnsbl.ignore") || !player.isOp()) {
-			debugLog(logPrefix + " Player is not op... Checking player " + player.getName());
+			debugLog(debugPrefix + " Player is not op... Checking player " + player.getName());
 			list.add(player.getName());
 			new DNSBLThread(this).runTaskAsynchronously(this);
 		}
