@@ -8,6 +8,10 @@
       <id>bukkit-repo</id>
       <url>http://repo.bukkit.org/content/groups/public</url>
     </repository>
+    <repository>
+      <id>Plugin Metrics</id>
+      <url>http://repo.mcstats.org/content/repositories/public</url>
+    </repository>
   </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -30,6 +34,12 @@
   		<artifactId>bukkit</artifactId>
   		<version>1.5.2-R1.0</version>
   	</dependency>
+  	<dependency>
+        <groupId>org.mcstats.bukkit</groupId>
+        <artifactId>metrics</artifactId>
+        <version>R6</version>
+        <scope>compile</scope>
+    </dependency>
   </dependencies>
   <description>A bukkit plugin to do threaded checks of a player's IP for Open proxies and Tor Exit Nodes using publicly accessible DNS Blacklists.</description>
   <organization>

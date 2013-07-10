@@ -16,7 +16,9 @@
 
 package net.ecsserver.plugins.bukkitdnsbl;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -25,19 +27,27 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.mcstats.Metrics;
 
 public class BukkitDNSBL extends JavaPlugin implements Listener {
 	private static boolean DEBUG = false; // set to false for release builds!
 	
-	public final static Logger log = Logger.getLogger("DNSBL");
-	public static String logPrefix = "[DNSBL]";
-	public static String chatPrefix = "&3[DNSBL]&f";
-	public Server server = getServer();
-	public static ArrayList<String> list = new ArrayList<String>(); // no, No, NO, NOOOO!
+	final static Logger log = Logger.getLogger("DNSBL");
+	static String logPrefix = "[DNSBL]";
+	static String chatPrefix = "&3[DNSBL]&f";
+	Server server = getServer();
+	static ArrayList<String> list = new ArrayList<String>(); // no, No, NO, NOOOO!
+	
 	
 	@Override
     public void onEnable() {
 		getServer().getPluginManager().registerEvents(this, this);
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
         log.info(logPrefix + " now checking players against know DNSBLs.");
     }
  
