@@ -41,6 +41,12 @@ public class DNSBLThread extends BukkitRunnable {
 	private String logPrefix;
 	private String debugPrefix;
 	private ArrayList<String> list;
+	
+	String DroneBL = "DroneBL";
+	String Spamhaus = "Spamhaus";
+	String ProxyBL = "ProxyBL";
+	String Sectoor = "Sectoor";
+	String Sorbs = "Sorbs";
 
 	public DNSBLThread(Plugin plugin) {
 		list = BukkitDNSBL.list;
@@ -95,29 +101,27 @@ public class DNSBLThread extends BukkitRunnable {
 					ARecord a = (ARecord) record;
 					if (a.getAddress().equals(InetAddress.getByName("127.0.0.8"))) { // socks4/5 proxy = 127.0.0.8
 						BukkitDNSBL.debugLog(debugPrefix + " We've found a socks proxy in dronebl! Kicking player " + player.getName());
-						if (player.isOnline()) {
-							player.kickPlayer("You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""));
-						}
+						BukkitDNSBL.kickPlayer(player, "You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""), DroneBL);
 						return;
 					}
 					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.9"))) { // http proxy = 127.0.0.9
 						BukkitDNSBL.debugLog(debugPrefix + " We've found a http proxy in dronebl! Kicking player " + player.getName());
 						if (player.isOnline()) {
-							player.kickPlayer("You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""));
+							BukkitDNSBL.kickPlayer(player, "You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""), DroneBL);
 						}
 						return;
 					}
 					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.10"))) { // proxy chain = 127.0.0.10
 						BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy chain in dronebl! Kicking player " + player.getName());
 						if (player.isOnline()) {
-							player.kickPlayer("You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""));
+							BukkitDNSBL.kickPlayer(player, "You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""), DroneBL);
 						}
 						return;
 					}
 					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.14"))) { // open wingate proxy = 127.0.0.14
 						BukkitDNSBL.debugLog(debugPrefix + " We've found a winegate proxy in dronebl! Kicking player " + player.getName());
 						if (player.isOnline()) {
-							player.kickPlayer("You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""));
+							BukkitDNSBL.kickPlayer(player, "You are listed in DroneBL. Are you a proxy? http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""), DroneBL);
 						}
 						return;
 					}
@@ -143,7 +147,7 @@ public class DNSBLThread extends BukkitRunnable {
 					if (a.getName().equals("torserver.tor.dnsbl.sectoor.de")) {
 						BukkitDNSBL.debugLog(debugPrefix + " We've found a tor exit node in sectoor.de! Kicking player " + player.getName());
 						if (player.isOnline()) {
-							player.kickPlayer("You are listed in sectoor. Are you a tor exit node?");
+							BukkitDNSBL.kickPlayer(player, "You are listed in sectoor. Are you a tor exit node?", Sectoor);
 						}
 						return;
 					}
@@ -166,7 +170,7 @@ public class DNSBLThread extends BukkitRunnable {
 			if (records != null) {
 				BukkitDNSBL.debugLog(debugPrefix + " We've found a record in spamhaus! Kicking player " + player.getName());
 				if (player.isOnline()) {
-					player.kickPlayer("You are listed in spamhaus' XBL list. Are you a proxy? You might have a virus...");
+					BukkitDNSBL.kickPlayer(player, "You are listed in spamhaus' XBL list. Are you a proxy? You might have a virus...", Spamhaus);
 				}
 				return;
 			}
@@ -184,7 +188,7 @@ public class DNSBLThread extends BukkitRunnable {
 			if (records != null) {
 				BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in ProxyBL! Kicking player " + player.getName());
 				if (player.isOnline()) {
-					player.kickPlayer("You are listed in ProxyBL. Are you a proxy?");
+					BukkitDNSBL.kickPlayer(player, "You are listed in ProxyBL. Are you a proxy?", ProxyBL);
 				}
 				return;
 			}
@@ -202,7 +206,7 @@ public class DNSBLThread extends BukkitRunnable {
 			if (records != null) {
 				BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in sorbs! Kicking player " + player.getName());
 				if (player.isOnline()) {
-					player.kickPlayer("You are listed in Sorbs' Proxy Blacklist. Are you a proxy?");
+					BukkitDNSBL.kickPlayer(player, "You are listed in Sorbs' Proxy Blacklist. Are you a proxy?", Sorbs);
 				}
 				return;
 			}
