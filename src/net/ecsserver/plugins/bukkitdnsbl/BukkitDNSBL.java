@@ -16,16 +16,10 @@
 
 package net.ecsserver.plugins.bukkitdnsbl;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.Server;
@@ -36,11 +30,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.mcstats.Metrics;
 import org.mcstats.Metrics.Graph;
-import org.yaml.snakeyaml.Yaml;
 
 public class BukkitDNSBL extends JavaPlugin implements Listener {
 	private static boolean DEBUG = false; // set to false for release builds!
-	
 	final static Logger log = Logger.getLogger("DNSBL");
 	static String logPrefix = "[DNSBL]";
 	static String debugPrefix = "[DNSBL-DEBUG]";
@@ -57,56 +49,39 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
     static int spamhausKicks = 0;
     static int sectoorKicks = 0;
     static int sorbsKicks = 0;
+    static int tornevallKicks = 0;
     static int unknownKicks = 0; //This should never be used
     
-    File metricsDB = new File(getDataFolder() + "/metrics.db");
+    File metricsDB = new File("plugins" + File.separator + "DNSBL" + File.separator + "metrics.db");
     InputStream stream;
 	
 	@Override
     public void onEnable() {
-		Yaml yaml = new Yaml();
+		
+		int[] integers = null;
 		try {
-			if (!metricsDB.exists()) {
-				metricsDB.createNewFile();
-			}
-			stream = new FileInputStream(metricsDB);
-		} 
-		catch (IOException e) {
+			integers = FlatFileHelper.getFlatFile(metricsDB);
+		}
+		catch(IOException e) {
+			//Treat it as if the file does not exist yet.
+			integers = new int[7];
 		}
 		
-		@SuppressWarnings("unchecked")
-		Map<String, Integer> dbData = (Map<String, Integer>) yaml.loadAll(stream);
-		Integer playersKicked = (int) dbData.get("playersKicked"),
-		droneblKicks = (int) dbData.get("droneblKicks"),
-		proxyblKicks = (int) dbData.get("proxyblKicks"),
-		spamhausKicks = (int) dbData.get("spamhausKicks"),
-		sectoorKicks = (int) dbData.get("sectoorKicks"),
-		sorbsKicks = (int) dbData.get("sorbsKicks"),
-		unknownKicks = (int) dbData.get("unknownKicks");
+		if(integers.length < 7) {
+			throw new IllegalStateException("The flatfile is invalid. Consider removal to fix this issue.");
+		}
+			 	
+		playersKicked 	= integers[0];
+		droneblKicks 	= integers[1];
+		proxyblKicks 	= integers[2];
+		spamhausKicks 	= integers[3];
+		sectoorKicks 	= integers[4];
+		sorbsKicks 		= integers[5];
+		tornevallKicks  = integers[6];
+		unknownKicks 	= integers[7];
 		
-		if(playersKicked != null) {
-			BukkitDNSBL.playersKicked = playersKicked;
-		}
-		if(droneblKicks != null) {
-			BukkitDNSBL.droneblKicks = droneblKicks;
-		}
-		if(proxyblKicks != null) {
-			BukkitDNSBL.proxyblKicks = proxyblKicks;
-		}
-		if(spamhausKicks != null) {
-			BukkitDNSBL.spamhausKicks = spamhausKicks;
-		}
-		if(sectoorKicks != null) {
-			BukkitDNSBL.sectoorKicks = sectoorKicks;
-		}
-		if(sorbsKicks != null) {
-			BukkitDNSBL.sorbsKicks = sorbsKicks;
-		}
-		if(unknownKicks != null) {
-			BukkitDNSBL.unknownKicks = unknownKicks;
-		}
-								
 		getServer().getPluginManager().registerEvents(this, this);
+		
 		try {
 			metrics = new Metrics(this);
 		} catch (IOException e) {
@@ -115,43 +90,28 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 		kicked = metrics.createGraph("Players kicked for proxys");
 		dnsblKicks = metrics.createGraph("IPs listed in DNSBLs");
 		metrics.start();
+		
 		debugLog(debugPrefix + " Sending data to Metrics.");
         log.info(logPrefix + " Now checking players against known DNSBLs.");  
     }
  
     @Override
     public void onDisable() {
-    	HashMap<String, Integer> saveData = new HashMap<String, Integer>();
-    	saveData.put("playersKicked", playersKicked);
-    	saveData.put("droneblKicks", droneblKicks);
-    	saveData.put("proxyblKicks", proxyblKicks);
-    	saveData.put("spamhausKicks", spamhausKicks);
-    	saveData.put("sectoorKicks", sectoorKicks);
-    	saveData.put("sorbsKicks", sorbsKicks);
-    	saveData.put("unknownKicks", unknownKicks);
-    	//metricsDB
-    	// proxyBL: 0
-    	//We need to do things in try so objects hurr.
-    	FileOutputStream fos = null;
-        BufferedOutputStream bos = null;
-        DataOutputStream dos = null;
-        try {
-          fos = new FileOutputStream(metricsDB);
-          bos = new BufferedOutputStream(fos);
-          dos = new DataOutputStream(bos);
-          
-          dos.writeUTF("playersKicked: " + playersKicked);
-          dos.writeUTF("droneblKicks: " + droneblKicks);
-          dos.writeUTF("proxyblKicks: " + proxyblKicks);
-          dos.writeUTF("spamhausKicks: " + spamhausKicks);
-          dos.writeUTF("sectoorKicks: " + sectoorKicks);
-          dos.writeUTF("sorbsKicks: " + sorbsKicks);
-          dos.writeUTF("unknownKicks: " + unknownKicks);
-          dos.close();
-         }
-         catch(Exception e) {
-           System.out.println(e);
-          }      
+    	int[] integers = new int[] {
+    			playersKicked,
+    			droneblKicks,
+    			proxyblKicks,
+    			spamhausKicks,
+    			sectoorKicks,
+    			sorbsKicks,
+    			tornevallKicks,
+    			unknownKicks
+		};
+    	
+    	boolean hasSaved = FlatFileHelper.saveFlatFile(metricsDB, integers);
+    	String logMessage = hasSaved == true ? "Flatfile Database saved." : "FLATFILE DATABASE NOT SAVED!";
+    	log.info(logPrefix + logMessage);
+    	
         log.info(logPrefix + " Disabling!");
         
     }
@@ -188,11 +148,15 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 					else if (dnsbl.equals("Sorbs")) {
 						return sorbsKicks++;
 					}
+					else if (dnsbl.equals("Tornevall")) {
+						return tornevallKicks++;
+					}
 					else {
 						return unknownKicks++;
 					}
 				}
 			});
+			log.info(logPrefix + " " + player + "'s IP was found in the " + dnsbl + " DNS Blacklist. Kicking.");
 			player.kickPlayer(reason);
 			return true;
 		}

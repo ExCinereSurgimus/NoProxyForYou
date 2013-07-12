@@ -47,6 +47,7 @@ public class DNSBLThread extends BukkitRunnable {
 	String ProxyBL = "ProxyBL";
 	String Sectoor = "Sectoor";
 	String Sorbs = "Sorbs";
+	String Tornevall = "Tornevall";
 
 	public DNSBLThread(Plugin plugin) {
 		list = BukkitDNSBL.list;
@@ -127,6 +128,7 @@ public class DNSBLThread extends BukkitRunnable {
 					}
 					else { // catch all others (ddos bots and the like and link them to dronebl
 						player.sendMessage(chatPrefix + " You are listed in DroneBL. To find out more goto: http://dronebl.org/lookup_branded?ip=" + ip.toString().replace("/",""));
+						return;
 					}
 				}
 			}
@@ -214,6 +216,48 @@ public class DNSBLThread extends BukkitRunnable {
 		catch (Exception e) {
 			log.severe(logPrefix + " There was an error! Printing stacktrace!");
 			System.out.println(e.getStackTrace());
-		}		
+		}	
+		
+		// Check Torenvall list
+		try {
+			BukkitDNSBL.debugLog(debugPrefix + " Checking Tornevall for ip " + ip.toString().replace("/", ""));
+			Lookup lookup = new Lookup(reverseIP + ".dnsbl.tornevall.org", Type.A);
+			Record[] records = lookup.run();
+			if (records != null) {
+				for (Record record : records) {
+					ARecord a = (ARecord) record;
+					if (a.getAddress().equals(InetAddress.getByName("127.0.0.2"))) { // Found a working proxy
+						BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in Tornevall! Kicking player " + player.getName());
+						BukkitDNSBL.kickPlayer(player, "You are listed in Sorbs' Proxy Blacklist. Are you a proxy?", Tornevall);
+						return;
+					}
+					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.32"))) { // Looks like tor
+						BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in Tornevall! Kicking player " + player.getName());
+						BukkitDNSBL.kickPlayer(player, "You are listed in Sorbs' Proxy Blacklist. Are you a proxy?", Tornevall);
+						return;
+					}
+					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.64"))) { // Abusive Host
+						BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in Tornevall! Kicking player " + player.getName());
+						BukkitDNSBL.kickPlayer(player, "You are listed in Sorbs' Proxy Blacklist. Are you a proxy?", Tornevall);
+						return;
+					}
+					else if (a.getAddress().equals(InetAddress.getByName("127.0.0.2"))) { // Anon-state proxy (anonymouse, etc)
+						BukkitDNSBL.debugLog(debugPrefix + " We've found a proxy in Tornevall! Kicking player " + player.getName());
+						BukkitDNSBL.kickPlayer(player, "You are listed in Sorbs' Proxy Blacklist. Are you a proxy?", Tornevall);
+						return;
+					}
+					else {
+						if (player.isOnline()) {
+							player.sendMessage(chatPrefix + " You have a preliminary listing in the Tornevall. Are you running a proxy?");
+						}
+						return;
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			log.severe(logPrefix + " There was an error! Printing Stacktrace!");
+			System.out.println(e.getStackTrace());
+		}
 	}	
 }
