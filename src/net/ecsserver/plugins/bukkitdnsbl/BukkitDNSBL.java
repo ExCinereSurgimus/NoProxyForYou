@@ -64,7 +64,7 @@ public class BukkitDNSBL extends JavaPlugin implements Listener {
 		}
 		catch(IOException e) {
 			//Treat it as if the file does not exist yet.
-			integers = new int[7];
+			integers = new int[8];
 		}
 		
 		if(integers.length < 7) {

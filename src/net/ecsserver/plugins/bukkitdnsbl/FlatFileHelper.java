@@ -23,7 +23,8 @@ public class FlatFileHelper
 	 * [3] - spamhausKicks
 	 * [4] - sectoorKicks
 	 * [5] - sorbsKicks
-	 * [6] - unknownKicks
+	 * [6] - tornevall
+	 * [7] - unknownKicks
 	 * @param File file
 	 * @return
 	 * @throws IOException 
@@ -70,7 +71,8 @@ public class FlatFileHelper
 	 * [3] - spamhausKicks
 	 * [4] - sectoorKicks
 	 * [5] - sorbsKicks
-	 * [6] - unknownKicks
+	 * [6] - tornevall
+	 * [7] - unknownKicks
 	 * @param integers
 	 * @return
 	 */
