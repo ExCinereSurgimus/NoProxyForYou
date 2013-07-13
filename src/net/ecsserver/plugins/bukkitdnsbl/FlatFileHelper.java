@@ -80,7 +80,8 @@ public class FlatFileHelper
 	{
 		if(!file.exists())
 		{
-			file.mkdirs(); //makeDURRRSS
+			File dir = new File("plugins" + File.separator + "DNSBL" + File.separator);
+			dir.mkdirs(); //makeDURRRSS
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
